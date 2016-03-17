@@ -123,8 +123,13 @@
 	
 			var Resource = railsResourceFactory({
 				url: url,
-				name: 'account',
-				serializer: railsSerializer(function() {
+				name: 'authUser',
+				rootWrapping: false,
+				serializer: railsSerializer({
+					camelize: function(value) {
+						return value;
+					}
+				}, function() {
 				})
 			});
 			
@@ -182,14 +187,18 @@
 			/**
 			 * Performs a user login and stores the OAuth2 tokens in the localStorage.
 			 */
-			function login(username, password) {
+			function login(username, password, userResource) {
 				return Auth.login(username, password).then(function(auth) {
 					setUsername(username);
 					debug('access_token expires in ' + auth.expires_in / 60 + ' minutes');
 					if (authService.isAuthValid(auth)) {
 						authService.setTokens(auth);
 						$rootScope.$broadcast('auth.login');
-						return $q.resolve(auth);
+						if (!!userResource) {
+							return authUserService.loadUser(userResource);
+						} else {
+							return $q.resolve(auth);
+						}
 					} else {
 						return $q.reject(auth);
 					}
@@ -373,12 +382,7 @@
 	 * A front-end authentication user service.
 	 */
 	.provider('authUserService', function() {
-		var userResourceName = 'AuthUser',
-			debugMode = false;
-		
-		this.userResourceName = function(_userResourceName_) {
-			userResourceName = _userResourceName_;
-		};
+		var debugMode = false;
 		
 		this.debugMode = function() {
 			debugMode = true;
@@ -399,16 +403,15 @@
 			/**
 			 * Loads the connected user and keeps it in the singleton and returns a promise.
 			 */
-			function loadUser() {
-				var authService = $injector.get('authService'),
-					User = $injector.get(userResourceName);
+			function loadUser(userResource) {
+				var authService = $injector.get('authService');
 
 				if (!isUser()) {
 					// block additional subsequent loads
 					loadingUser = true;
 					
 					if (authService.isAuthenticated()) {
-						return User.findByUsername(authService.getUsername()).then(function(user) {
+						return userResource.findByUsername(authService.getUsername()).then(function(user) {
 							debug('loaded connected user with id ' + user.id);
 							setUser(user);
 							$rootScope.$broadcast('auth.user.loaded');

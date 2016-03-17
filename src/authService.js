@@ -36,14 +36,18 @@
 			/**
 			 * Performs a user login and stores the OAuth2 tokens in the localStorage.
 			 */
-			function login(username, password) {
+			function login(username, password, userResource) {
 				return Auth.login(username, password).then(function(auth) {
 					setUsername(username);
 					debug('access_token expires in ' + auth.expires_in / 60 + ' minutes');
 					if (authService.isAuthValid(auth)) {
 						authService.setTokens(auth);
 						$rootScope.$broadcast('auth.login');
-						return $q.resolve(auth);
+						if (!!userResource) {
+							return authUserService.loadUser(userResource);
+						} else {
+							return $q.resolve(auth);
+						}
 					} else {
 						return $q.reject(auth);
 					}

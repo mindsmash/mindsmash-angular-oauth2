@@ -7,12 +7,7 @@
 	 * A front-end authentication user service.
 	 */
 	.provider('authUserService', function() {
-		var userResourceName = 'AuthUser',
-			debugMode = false;
-		
-		this.userResourceName = function(_userResourceName_) {
-			userResourceName = _userResourceName_;
-		};
+		var debugMode = false;
 		
 		this.debugMode = function() {
 			debugMode = true;
@@ -33,16 +28,15 @@
 			/**
 			 * Loads the connected user and keeps it in the singleton and returns a promise.
 			 */
-			function loadUser() {
-				var authService = $injector.get('authService'),
-					User = $injector.get(userResourceName);
+			function loadUser(userResource) {
+				var authService = $injector.get('authService');
 
 				if (!isUser()) {
 					// block additional subsequent loads
 					loadingUser = true;
 					
 					if (authService.isAuthenticated()) {
-						return User.findByUsername(authService.getUsername()).then(function(user) {
+						return userResource.findByUsername(authService.getUsername()).then(function(user) {
 							debug('loaded connected user with id ' + user.id);
 							setUser(user);
 							$rootScope.$broadcast('auth.user.loaded');

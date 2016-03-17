@@ -25,14 +25,15 @@
 	}
 
 	describe('oauth2 authService', function() {
-	    var $rootScope, 
-	    	$q,
-	    	$http,
-	    	$httpBackend,
-	    	authService,
-	    	Auth,
-	        authUserService;
-	
+		var $rootScope, 
+		$q,
+		$http,
+		$httpBackend,
+		authService,
+		Auth,
+		authUserService,
+		AuthUser;
+		
 	    beforeEach(module(moduleName, function(authServiceProvider, AuthProvider, authUserServiceProvider, AuthUserProvider) {
 	    	authServiceProvider.debugMode();
 	    	AuthProvider.apiBaseUrl(apiBaseUrl);
@@ -41,12 +42,8 @@
 	    	AuthUserProvider.url(apiBaseUrl + '/{{username}}')
 	    }));
 	    
-	    beforeEach(inject(function(_authService_) {
-	    	authService = _authService_;
-	    }));
-	    
 	    beforeEach(function() {			
-			inject(function(_$rootScope_, _$q_, _$http_, _$httpBackend_, _authService_, _Auth_, _authUserService_) {
+			inject(function(_$rootScope_, _$q_, _$http_, _$httpBackend_, _authService_, _Auth_, _authUserService_, _AuthUser_) {
 				$rootScope = _$rootScope_;
 				$q = _$q_;
 				$http = _$http_;
@@ -54,6 +51,7 @@
 		    	authService = _authService_;
 		    	Auth = _Auth_;
 		    	authUserService = _authUserService_;
+		    	AuthUser = _AuthUser_;
 		    });
 		});
 	    
@@ -136,6 +134,31 @@
 		    	expect(authService.getRefreshToken()).toBe(null);
 		    	expect(authService.getUsername()).toBe(null);
 		    	expect(logoutEvent.name).toBe('auth.logout');
+		    });
+		    
+		    it('should login and return user object', function() {
+		    	// given
+		    	var loginResult, loginEvent;
+		    	$rootScope.$on('auth.login', function(event) {
+		    		loginEvent = event;
+		    	});
+		    	expectSuccessfulLogin($httpBackend);
+		    	$httpBackend.expectGET(apiBaseUrl + '/' + username).respond(200, {id: 2, username: username, test_property: ''})
+		    	
+		    	// when
+		    	authService.login(username, password, AuthUser).then(function(user) {
+		    		loginResult = user;
+		    	});
+		    	$httpBackend.flush();
+		    	
+		    	// then
+		    	expect(loginResult.id).toBe(2);
+		    	expect(loginResult.username).toBe(username);
+		    	expect(loginResult.test_property).toBe('');
+		    	expect(loginEvent.name).toBe('auth.login');
+		    	expect(authService.getAccessToken()).toBe(accessToken);
+		    	expect(authService.getRefreshToken()).toBe(refreshToken);
+		    	expect(authService.isAuthenticated()).toBe(true);
 		    });
 	    });
 	    

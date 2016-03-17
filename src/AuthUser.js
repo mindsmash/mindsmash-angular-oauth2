@@ -18,8 +18,13 @@
 	
 			var Resource = railsResourceFactory({
 				url: url,
-				name: 'account',
-				serializer: railsSerializer(function() {
+				name: 'authUser',
+				rootWrapping: false,
+				serializer: railsSerializer({
+					camelize: function(value) {
+						return value;
+					}
+				}, function() {
 				})
 			});
 			
