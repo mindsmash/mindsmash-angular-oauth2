@@ -62,7 +62,7 @@
 			 * Performs a user login.
 			 */
 			function login(username, password) {
-				return Resource.$post(Resource.$url(), 'grant_type=password&username=' + username + '&password=' + password);
+				return Resource.$post(Resource.$url(), 'grant_type=password&username=' + encodeURIComponent(username) + '&password=' + encodeURIComponent(password));
 			}
 
 			/**
