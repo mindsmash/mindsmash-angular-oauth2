@@ -1,6 +1,6 @@
 {
   "name": "mindsmash-oauth2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "OAuth2 services for AngularJS",
   "license": "MIT",
   "author": "mindsmash GmbH",
