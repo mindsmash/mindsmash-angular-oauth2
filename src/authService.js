@@ -81,7 +81,6 @@
 			 */
 			function refreshToken() {
 				var refreshTokenString = authService.getRefreshToken();
-				unsetTokens();
 				debug('access token invalid - trying to refresh with refresh token');
 				return Auth.refreshToken(refreshTokenString).then(function(auth) {
 					debug('access_token expires in ' + auth.expires_in / 60 + ' minutes');
