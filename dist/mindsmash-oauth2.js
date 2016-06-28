@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-oauth2
- * @version v1.0.0
+ * @version v1.0.1
  * @author mindsmash GmbH
  * @license MIT
  */
@@ -530,7 +530,7 @@
 				
 				// check if refresh token can be applied
 				if (response.status === 401) {
-					if (response.config.url.indexOf('/oauth/token') === 0) {
+					if (response.config.url.indexOf('/oauth/token') !== -1) {
 						// no refresh when token request fails
 						authService.failAuthentication();
 						return $q.reject();
@@ -556,4 +556,5 @@
 		};
 	}]);
 })();
+
 })(angular);
