@@ -26,7 +26,7 @@
 				
 				// check if refresh token can be applied
 				if (response.status === 401) {
-					if (response.config.url.indexOf('/oauth/token') === 0) {
+					if (response.config.url.indexOf('/oauth/token') !== -1) {
 						// no refresh when token request fails
 						authService.failAuthentication();
 						return $q.reject();
