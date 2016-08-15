@@ -503,7 +503,7 @@
 			 */
 			function hasAnyPermission(permissions) {
 				var anyPermission = false;
-				getUser().getRoles().forEach(function(role) {
+				getRoles().forEach(function(role) {
 					if (permissions.indexOf(role) !== -1) {
 						anyPermission = true;
 					}
@@ -517,7 +517,7 @@
 			 */
 			function hasAllPermissions(permissions) {
 				var allPermissions = true,
-					roles = getUser().getRoles();
+					roles = getRoles();
 				permissions.split(',').forEach(function(permission) {
 					permission = permission.trim();
 					if (roles.indexOf(permission) === -1) {
