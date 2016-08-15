@@ -502,9 +502,14 @@
 			 * passed as single (comma-separated) string.
 			 */
 			function hasAnyPermission(permissions) {
-				var anyPermission = false;
-				getRoles().forEach(function(role) {
-					if (permissions.indexOf(role) !== -1) {
+				if (getUser() === null) {
+					return false;
+				}
+				var anyPermission = false,
+					roles = getRoles();
+				permissions.split(',').forEach(function(permission) {
+					permission = permission.trim();
+					if (roles.indexOf(permission) !== -1) {
 						anyPermission = true;
 					}
 				});
@@ -516,6 +521,9 @@
 			 * passed as single (comma-separated) string.
 			 */
 			function hasAllPermissions(permissions) {
+				if (getUser() === null) {
+					return false;
+				}
 				var allPermissions = true,
 					roles = getRoles();
 				permissions.split(',').forEach(function(permission) {
