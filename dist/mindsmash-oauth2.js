@@ -494,7 +494,7 @@
 			 * 
 			 */
 			function getRoles() {
-				return getUser[rolesProperty];
+				return getUser()[rolesProperty];
 			}
 
 			/**
