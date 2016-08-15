@@ -1,6 +1,6 @@
 /**
  * @name mindsmash-oauth2
- * @version v1.0.1
+ * @version v1.0.3
  * @author mindsmash GmbH
  * @license MIT
  */
@@ -402,7 +402,9 @@
 				getUser : getUser,
 				updateUser : updateUser,
 				refreshUser : refreshUser,
-				clearUser : clearUser
+				clearUser : clearUser,
+				hasAnyPermission : hasAnyPermission,
+				hasAllPermissions : hasAllPermissions
 			};
 			
 			/**
@@ -499,7 +501,7 @@
 			 * Checks if the user has any of the given permissions. Permissions can be
 			 * passed as single (comma-separated) string.
 			 */
-			Auth.hasAnyPermission = function(permissions) {
+			function hasAnyPermission(permissions) {
 				var anyPermission = false;
 				getUser().getRoles().forEach(function(role) {
 					if (permissions.indexOf(role) !== -1) {
@@ -513,7 +515,7 @@
 			 * Checks if the user has all of the given permissions. Permissions can be
 			 * passed as single (comma-separated) string.
 			 */
-			Auth.hasAllPermissions = function(permissions) {
+			function hasAllPermissions(permissions) {
 				var allPermissions = true,
 					roles = getUser().getRoles();
 				permissions.split(',').forEach(function(permission) {
