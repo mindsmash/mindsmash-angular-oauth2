@@ -382,7 +382,12 @@
 	 * A front-end authentication user service.
 	 */
 	.provider('authUserService', function() {
-		var debugMode = false;
+		var rolesProperty = 'roles',
+			debugMode = false;
+		
+		this.rolesProperty = function(_rolesProperty_) {
+			rolesProperty = _rolesProperty_;
+		};
 		
 		this.debugMode = function() {
 			debugMode = true;
@@ -482,6 +487,43 @@
 			function clearUser() {
 				connectedUser = null;
 			}
+			
+			/**
+			 * 
+			 */
+			function getRoles() {
+				return getUser[rolesProperty];
+			}
+
+			/**
+			 * Checks if the user has any of the given permissions. Permissions can be
+			 * passed as single (comma-separated) string.
+			 */
+			Auth.hasAnyPermission = function(permissions) {
+				var anyPermission = false;
+				getUser().getRoles().forEach(function(role) {
+					if (permissions.indexOf(role) !== -1) {
+						anyPermission = true;
+					}
+				});
+				return anyPermission;
+			};
+
+			/**
+			 * Checks if the user has all of the given permissions. Permissions can be
+			 * passed as single (comma-separated) string.
+			 */
+			Auth.hasAllPermissions = function(permissions) {
+				var allPermissions = true,
+					roles = getUser().getRoles();
+				permissions.split(',').forEach(function(permission) {
+					permission = permission.trim();
+					if (roles.indexOf(permission) === -1) {
+						allPermissions = false;
+					}
+				});
+				return allPermissions;
+			};
 			
 			/**
 			 * Log when in debug mode.
