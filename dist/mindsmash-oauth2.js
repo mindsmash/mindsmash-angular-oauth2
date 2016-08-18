@@ -479,8 +479,9 @@
 			 * Clear user and retrieve it again from server as a promise.
 			 */
 			function refreshUser() {
+				var user = connectedUser;
 				clearUser();
-				return loadUser();
+				return loadUser(user.constructor);
 			}
 			
 			/**
@@ -502,11 +503,14 @@
 			 * passed as single (comma-separated) string.
 			 */
 			function hasAnyPermission(permissions) {
+				debug('Permissions to check any of', permissions);
 				if (getUser() === null) {
+					debug('User missing.');
 					return false;
 				}
 				var anyPermission = false,
 					roles = getRoles();
+				debug('Actual permissions', roles);
 				permissions.split(',').forEach(function(permission) {
 					permission = permission.trim();
 					if (roles.indexOf(permission) !== -1) {
@@ -514,18 +518,21 @@
 					}
 				});
 				return anyPermission;
-			};
+			}
 
 			/**
 			 * Checks if the user has all of the given permissions. Permissions can be
 			 * passed as single (comma-separated) string.
 			 */
 			function hasAllPermissions(permissions) {
+				debug('Permissions to check all of', permissions);
 				if (getUser() === null) {
+					debug('User missing.');
 					return false;
 				}
 				var allPermissions = true,
 					roles = getRoles();
+				debug('Actual permissions', roles);
 				permissions.split(',').forEach(function(permission) {
 					permission = permission.trim();
 					if (roles.indexOf(permission) === -1) {
@@ -533,7 +540,7 @@
 					}
 				});
 				return allPermissions;
-			};
+			}
 			
 			/**
 			 * Log when in debug mode.

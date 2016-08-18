@@ -4,6 +4,7 @@
 	var moduleName = 'mindsmash.oauth2',
 		apiBaseUrl = 'http://localhost:8080',
 		oauthUrl = apiBaseUrl + '/oauth/token',
+		authUserBaseUrl = apiBaseUrl + '/user',
 		basicAuthCode = 'uzRgh24l=',
 		username = 'testbroker',
 		password = 'testpw',
@@ -39,7 +40,7 @@
 	    	AuthProvider.apiBaseUrl(apiBaseUrl);
 	    	AuthProvider.basicAuthCode(basicAuthCode);
 	    	authUserServiceProvider.debugMode();
-	    	AuthUserProvider.url(apiBaseUrl + '/{{username}}')
+	    	AuthUserProvider.url(authUserBaseUrl + '/{{username}}')
 	    }));
 	    
 	    beforeEach(function() {			
@@ -143,7 +144,12 @@
 		    		loginEvent = event;
 		    	});
 		    	expectSuccessfulLogin($httpBackend);
-		    	$httpBackend.expectGET(apiBaseUrl + '/' + username).respond(200, {id: 2, username: username, test_property: ''})
+		    	$httpBackend.expectGET(authUserBaseUrl + '/' + username)
+		    		.respond(200, {
+		    			id: 2, 
+		    			username: username, 
+		    			test_property: ''
+		    		});
 		    	
 		    	// when
 		    	authService.login(username, password, AuthUser).then(function(user) {

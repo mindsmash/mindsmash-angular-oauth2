@@ -7,7 +7,12 @@
 	 * A front-end authentication user service.
 	 */
 	.provider('authUserService', function() {
-		var debugMode = false;
+		var rolesProperty = 'roles',
+			debugMode = false;
+		
+		this.rolesProperty = function(_rolesProperty_) {
+			rolesProperty = _rolesProperty_;
+		};
 		
 		this.debugMode = function() {
 			debugMode = true;
@@ -22,7 +27,9 @@
 				getUser : getUser,
 				updateUser : updateUser,
 				refreshUser : refreshUser,
-				clearUser : clearUser
+				clearUser : clearUser,
+				hasAnyPermission : hasAnyPermission,
+				hasAllPermissions : hasAllPermissions
 			};
 			
 			/**
@@ -97,8 +104,9 @@
 			 * Clear user and retrieve it again from server as a promise.
 			 */
 			function refreshUser() {
+				var user = connectedUser;
 				clearUser();
-				return loadUser();
+				return loadUser(user.constructor);
 			}
 			
 			/**
@@ -106,6 +114,57 @@
 			 */
 			function clearUser() {
 				connectedUser = null;
+			}
+			
+			/**
+			 * 
+			 */
+			function getRoles() {
+				return getUser()[rolesProperty];
+			}
+
+			/**
+			 * Checks if the user has any of the given permissions. Permissions can be
+			 * passed as single (comma-separated) string.
+			 */
+			function hasAnyPermission(permissions) {
+				debug('Permissions to check any of', permissions);
+				if (getUser() === null) {
+					debug('User missing.');
+					return false;
+				}
+				var anyPermission = false,
+					roles = getRoles();
+				debug('Actual permissions', roles);
+				permissions.split(',').forEach(function(permission) {
+					permission = permission.trim();
+					if (roles.indexOf(permission) !== -1) {
+						anyPermission = true;
+					}
+				});
+				return anyPermission;
+			}
+
+			/**
+			 * Checks if the user has all of the given permissions. Permissions can be
+			 * passed as single (comma-separated) string.
+			 */
+			function hasAllPermissions(permissions) {
+				debug('Permissions to check all of', permissions);
+				if (getUser() === null) {
+					debug('User missing.');
+					return false;
+				}
+				var allPermissions = true,
+					roles = getRoles();
+				debug('Actual permissions', roles);
+				permissions.split(',').forEach(function(permission) {
+					permission = permission.trim();
+					if (roles.indexOf(permission) === -1) {
+						allPermissions = false;
+					}
+				});
+				return allPermissions;
 			}
 			
 			/**
