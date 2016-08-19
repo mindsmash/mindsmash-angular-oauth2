@@ -25,6 +25,7 @@
 			var authUserService = {
 				loadUser : loadUser,
 				getUser : getUser,
+				isUser : isUser,
 				updateUser : updateUser,
 				refreshUser : refreshUser,
 				clearUser : clearUser,

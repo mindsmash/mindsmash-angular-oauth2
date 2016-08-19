@@ -107,6 +107,20 @@
 	    		expect(instantUser.id).toBe(1);
 	    	});
 	    	
+	    	it('should check for user', function() {
+	    		// given
+	    		var isUser = [];
+	    		
+	    		// when
+	    		isUser.push(authUserService.isUser());
+	    		authUserService.clearUser();
+	    		isUser.push(authUserService.isUser());
+	    		
+	    		// then
+	    		expect(isUser[0]).toBe(true);
+	    		expect(isUser[1]).toBe(false);
+	    	});
+	    	
 	    	it('should clear user', function() {
 	    		
 	    		// when
@@ -130,6 +144,18 @@
 	    		
 	    		// then
 	    		expect(user.id).toBe(2);
+	    	});
+	    	
+	    	it('should update user', function() {
+	    		// given
+	    		var updatedUser = new user.constructor({id : 2});
+	    		
+	    		// when
+	    		authUserService.updateUser(updatedUser);
+	    		var updateResult = authUserService.getUser();
+	    		
+	    		// then
+	    		expect(updateResult.id).toBe(2);
 	    	});
 	    	
 	    	it('should check any permission', function() {
