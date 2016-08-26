@@ -240,6 +240,26 @@
 		    	expect(authError.data.error).toBe('invalid_token');
 		    	expect(authEvent.name).toBe('auth.unauthenticated');
 		    });
+
+		    it('should broadcast when server is not available', function() {
+		    	// given
+		    	var authError, authEvent;
+		    	$rootScope.$on('auth.server.connection.failure', function(event) {
+		    		authEvent = event;
+		    	});
+		    	authService.setTokens({access_token: null, refresh_token: refreshToken});
+		    	$httpBackend.expectGET('http://test').respond(-1);
+
+			    // when
+		    	$http.get('http://test').catch(function(response) {
+		    		authError = response;
+		    	});
+		    	$httpBackend.flush();
+
+		    	// then
+		    	expect(authError.status).toBe(-1);
+		    	expect(authEvent.name).toBe('auth.server.connection.failure');
+		    });
 	    });
 	    
 	    describe('api', function() {

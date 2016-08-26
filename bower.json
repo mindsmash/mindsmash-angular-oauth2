@@ -1,6 +1,6 @@
 {
   "name": "mindsmash-oauth2",
-  "version": "1.0.3",
+	"version": "1.0.4",
   "description": "OAuth2 services for AngularJS",
   "license": "MIT",
   "main": [
@@ -14,11 +14,11 @@
     "test",
     "coverage"
   ],
-  "dependencies": {
+	"dependencies": {
     "angular": "~1.4.9",
     "angularjs-rails-resource": "~2.0.0",
     "angular-jwt": "~0.0.9",
-    "angular-base64": "~2.0.5"
+    "angular-base64": "~2.0.5",
   },
   "devDependencies": {
     "angular-mocks": "~1.4.9"

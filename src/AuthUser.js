@@ -1,9 +1,11 @@
 (function() {
 	'use strict';
 
-	angular.module('mindsmash.oauth2')
-	
-	.provider('AuthUser', function() {
+	angular
+		.module('mindsmash.oauth2')
+		.provider('AuthUser', AuthUser);
+
+	function AuthUser() {
 		// Config
 		var url = null;
 			
@@ -41,5 +43,5 @@
 			
 			return Resource;
 		};
-	});
+	}
 })();
