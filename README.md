@@ -37,6 +37,7 @@ Authentication services for AngularJS. The current implementation features login
 ### Contributors
 
    * Cornelius Hofmeister @ [mindsmash GmbH](https://www.mindsmash.com/)
+   * Patrick Maas @ [mindsmash GmbH](https://www.mindsmash.com/)
 
 ### License
 

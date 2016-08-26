@@ -1,27 +1,29 @@
 (function() {
 	'use strict';
-	
-	angular.module('mindsmash.oauth2')
-	
+
+	angular
+		.module('mindsmash.oauth2')
+		.provider('authUserService', authUserService);
+
 	/**
 	 * A front-end authentication user service.
 	 */
-	.provider('authUserService', function() {
+	function authUserService() {
 		var rolesProperty = 'roles',
 			debugMode = false;
-		
+
 		this.rolesProperty = function(_rolesProperty_) {
 			rolesProperty = _rolesProperty_;
 		};
-		
+
 		this.debugMode = function() {
 			debugMode = true;
 		};
-		
+
 		this.$get = function($injector, $rootScope, $q, $timeout) {
 			var loadingUser = false,
 				connectedUser = null;
-			
+
 			var authUserService = {
 				loadUser : loadUser,
 				getUser : getUser,
@@ -32,7 +34,7 @@
 				hasAnyPermission : hasAnyPermission,
 				hasAllPermissions : hasAllPermissions
 			};
-			
+
 			/**
 			 * Loads the connected user and keeps it in the singleton and returns a promise.
 			 */
@@ -42,7 +44,7 @@
 				if (!isUser()) {
 					// block additional subsequent loads
 					loadingUser = true;
-					
+
 					if (authService.isAuthenticated()) {
 						return userResource.findByUsername(authService.getUsername()).then(function(user) {
 							debug('loaded connected user with id ' + user.id);
@@ -53,7 +55,7 @@
 							debug('failed to load connected user', error);
 							clearUser();
 							$rootScope.$broadcast('auth.user.failed');
-							if(error && (error.status === 403 || error.status === 404)) {
+							if (error && (error.status === 403 || error.status === 404)) {
 								$rootScope.$broadcast('auth.logout.auto');
 								authService.logout();
 							}
@@ -62,45 +64,45 @@
 							loadingUser = false;
 						});
 					}
-				} else if(loadingUser === true) {
-					return $timeout(function(){
+				} else if (loadingUser === true) {
+					return $timeout(function() {
 						return loadUser();
 					}, 50);
 				}
-				
+
 				var deferred = $q.defer();
 				deferred[getUser() !== null ? 'resolve' : 'reject'](getUser());
 				return deferred.promise;
 			}
-			
+
 			/**
 			 * Check if user is already present.
 			 */
 			function isUser() {
 				return connectedUser !== null;
 			}
-			
+
 			/**
 			 * Get connected user instantly.
 			 */
 			function getUser() {
 				return connectedUser;
 			}
-			
+
 			/**
 			 * Set user locally.
 			 */
 			function setUser(user) {
 				connectedUser = user;
 			}
-			
+
 			/**
 			 * Update connected user locally.
 			 */
 			function updateUser(user) {
 				connectedUser = user;
 			}
-			
+
 			/**
 			 * Clear user and retrieve it again from server as a promise.
 			 */
@@ -109,16 +111,16 @@
 				clearUser();
 				return loadUser(user.constructor);
 			}
-			
+
 			/**
 			 * Remove user locally.
 			 */
 			function clearUser() {
 				connectedUser = null;
 			}
-			
+
 			/**
-			 * 
+			 *
 			 */
 			function getRoles() {
 				return getUser()[rolesProperty];
@@ -167,13 +169,13 @@
 				});
 				return allPermissions;
 			}
-			
+
 			/**
 			 * Log when in debug mode.
 			 */
 			function debug(message, data) {
 				if (debugMode) {
-					var messageText = 'authUserService - ' + message + (data ? ' :' : ''); 
+					var messageText = 'authUserService - ' + message + (data ? ' :' : '');
 					if (data) {
 						console.log(messageText, data);
 					} else {
@@ -181,8 +183,8 @@
 					}
 				}
 			}
-			
+
 			return authUserService;
 		};
-	});
+	}
 })();
